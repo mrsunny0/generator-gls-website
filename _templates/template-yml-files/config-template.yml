@@ -1,0 +1,17 @@
+# Site settings
+title: TITLE
+description: DESCRIPTION
+gh_page: this.example.com
+contact: george.lele.sun@gmail.com
+
+# Front page settings
+username: George Sun
+header: HEADER
+site_title: SITE TITLE
+background_image: aaa
+
+# Google-analytics
+google-analytics:
+  id: "UA-155355374-2"
+
+exclude: ['package.json', 'src' , 'node_modules']
