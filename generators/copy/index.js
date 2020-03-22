@@ -16,7 +16,7 @@ module.exports = class extends Generator {
 	paths() {
 		// create root template folder path
 		var sourceRoot = this.sourceRoot()
-		sourceRoot = path.join(sourceRoot, "../../../_templates")
+		sourceRoot = path.join(sourceRoot, "../../../templates")
 		this.sourceRoot(sourceRoot)
 
 		// store template folders
@@ -48,7 +48,7 @@ module.exports = class extends Generator {
 			{},
 			{},
 			{
-				globalOptions: {
+				globOptions: {
 					ignore: ["**/*.yml", "**/*_vars.scss"], // ignore all yml files, and _var.scss
 					dot: true,
 				}

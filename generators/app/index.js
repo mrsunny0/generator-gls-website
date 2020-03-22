@@ -21,7 +21,7 @@ module.exports = class extends Generator {
 		this.option("install", {
 			desc: "Prevent full installation",
 			type: Boolean,
-			default: true
+			default: false
 		})
 
 		this.log("templating files...")
@@ -33,7 +33,7 @@ module.exports = class extends Generator {
 	paths() {
 		// create root template folder path
 		var sourceRoot = this.sourceRoot()
-		sourceRoot = path.join(sourceRoot, "../../../_templates")
+		sourceRoot = path.join(sourceRoot, "../../../templates")
 		this.sourceRoot(sourceRoot)
 
 		// store template folders
@@ -67,7 +67,7 @@ module.exports = class extends Generator {
 		},
 		{
 			type: "input",
-			name: "header_name",
+			name: "header",
 			message: "Your website header name",
 			default: this.appname
 		},
@@ -93,7 +93,20 @@ module.exports = class extends Generator {
 
 	// default() {}
 
+	/* 
+	 * Compose multiple generators
+	 */
 	writing() {
+		this.composeWith(require.resolve(
+			path.join(
+				__dirname,
+				"../copy"
+			),
+			{
+				args: [this.cd_template]
+			}
+		))
+
 		var icon_yml = yaml.safeLoad(
 			fs.readFileSync(
 				this.cd_template(
@@ -103,6 +116,21 @@ module.exports = class extends Generator {
 			)
 		)
 				
+		// config
+		// read package.json and .git/config for metadata
+		this.fs.copyTpl(
+			this.templatePath(
+				this.cd_template("yml", "config-template.yml")
+			),
+			this.destinationPath("_config.yml"),
+			{
+				title: this.answers.name,
+				description: "",
+				gh_page: "",
+				header: this.answers.header
+			}
+		)
+
 		// template icon yml file
 		this.fs.write(
 			this.destinationPath(path.join("_data", "icons.yml")),
@@ -110,6 +138,15 @@ module.exports = class extends Generator {
 		)
 
 		// template sections yml file
+		this.fs.copyTpl(
+			this.templatePath(
+				this.cd_template('yml', 'sections-template.yml')
+			),
+			this.destinationPath(path.join("_data", "sections.yml")),
+			{
+				HEADING: "THIS IS A CUSTOM HEADING"
+			}
+		)
 
 		// template SCSS var values (e.g. color)
 		this.fs.copyTpl(
@@ -124,11 +161,13 @@ module.exports = class extends Generator {
 	// conflicts() {}
 
 	install() {
-		if (this.option.install) {
-			this.spawnCommandSync('npm', ['install']) // install npm packages
-			this.spawnCommandSync("bundle", ['install']); // install ruby gems
-			this.spawnCommandSync("bundle", ["exec", "jekyll", "build"]) // build jekyll site
-			this.spawnCommandSync("gulp") // serve jekyll site with browersync
+		if (this.options.install) {
+			this.composeWith(require.resolve(
+				path.join(
+					__dirname, 
+					"../install"
+				)	
+			))
 		} else {
 			this.log("--install=false; skipping install")
 		}
