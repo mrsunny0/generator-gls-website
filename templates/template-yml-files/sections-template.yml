@@ -1,6 +1,6 @@
 - id: ID
-  heading: <%= HEADING %>
-  description: DESCRIPTION
+  heading: <%= header %>
+  description: <$= decription %>
   group: 
     - subheading: XXX
       caption: YYY 
