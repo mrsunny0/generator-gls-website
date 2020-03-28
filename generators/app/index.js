@@ -1,7 +1,10 @@
 const Generator = require('yeoman-generator');
 const path = require('path');
 const yaml = require("js-yaml");
-const fs = require('fs');
+const fs = require('fs-extra');
+const template_finder = require("../template_finder")
+
+console.log(template_finder)
 
 module.exports = class extends Generator {
 	/*
@@ -35,23 +38,7 @@ module.exports = class extends Generator {
 		var sourceRoot = this.sourceRoot()
 		sourceRoot = path.join(sourceRoot, "../../../templates")
 		this.sourceRoot(sourceRoot)
-
-		// store template folders
-		this.template_folder = {
-			root: "template-gh-pages",
-			yml: "template-yml-files",
-			scss: "template-scss-files"
-		}
-
-		// add function to change between template dirs
-		var that = this
-		this.cd_template = function(which, file) {
-			return path.join(
-				that.sourceRoot(),
-				that.template_folder[which],
-				file
-			)	
-		}
+		this.finder = template_finder(this.sourceRoot())
 	}
 
 	/*
@@ -62,26 +49,39 @@ module.exports = class extends Generator {
 		{
 			type: "input",
 			name: "name",
-			message: "Your project name",
+			message: "Website name",
 			default: this.appname // Default to current folder name
 		},
 		{
 			type: "input",
+			name: "author",
+			message: "Website author",
+			default: ""
+		},
+		{
+			type: "input",
+			name: "description",
+			message: "Website description",
+			default: ""
+		},
+		{
+			type: "input",
 			name: "header",
-			message: "Your website header name",
+			message: "Website header name",
 			default: this.appname
 		},
 		{
 			type: "input",
 			name: "main_color",
-			message: "what color theme would you like?",
+			message: "What color theme would you like?",
 			default: "#000"
 		},
 		{
 			type: "checkbox",
 			name: "icons",
 			message: "Which icons do you want in your header?",
-			choices: ["email", "github", "linkedin", "twitter", "instagram", "scholar"]
+			choices: ["email", "github", "linkedin", "twitter", "instagram", "scholar"],
+			default: []
 		}
 		]);
 	
@@ -89,27 +89,23 @@ module.exports = class extends Generator {
 		this.answers = answers;
 	}
 
-	// configuring() {}
-
-	// default() {}
-
 	/* 
 	 * Compose multiple generators
 	 */
 	writing() {
-		this.composeWith(require.resolve(
-			path.join(
-				__dirname,
-				"../copy"
-			),
+		// copy all non-template files using sub-generator
+		this.composeWith(
+			// "gls-website:copy",
+			require.resolve(path.join(__dirname, "..", "copy")),
 			{
-				args: [this.cd_template]
+				sourceRoot: this.sourceRoot()
 			}
-		))
-
+		)
+		
+		// read in template yaml data
 		var icon_yml = yaml.safeLoad(
 			fs.readFileSync(
-				this.cd_template(
+				this.finder(
 					"yml",
 					"icons-template.yml"
 				), 'utf-8'
@@ -120,7 +116,7 @@ module.exports = class extends Generator {
 		// read package.json and .git/config for metadata
 		this.fs.copyTpl(
 			this.templatePath(
-				this.cd_template("yml", "config-template.yml")
+				this.finder("yml", "config-template.yml")
 			),
 			this.destinationPath("_config.yml"),
 			{
@@ -140,25 +136,23 @@ module.exports = class extends Generator {
 		// template sections yml file
 		this.fs.copyTpl(
 			this.templatePath(
-				this.cd_template('yml', 'sections-template.yml')
+				this.finder('yml', 'sections-template.yml')
 			),
 			this.destinationPath(path.join("_data", "sections.yml")),
 			{
-				HEADING: "THIS IS A CUSTOM HEADING"
+				header: this.answers.header
 			}
 		)
 
 		// template SCSS var values (e.g. color)
 		this.fs.copyTpl(
-			this.templatePath(this.cd_template("scss", "scss-template.scss")),
+			this.templatePath(this.finder("scss", "scss-template.scss")),
 			this.destinationPath(path.join("src", "scss", "_vars.scss")),
 			{
 				main_color: this.answers.main_color
 			}
 		)
 	}
-
-	// conflicts() {}
 
 	install() {
 		if (this.options.install) {
@@ -168,8 +162,6 @@ module.exports = class extends Generator {
 					"../install"
 				)	
 			))
-		} else {
-			this.log("--install=false; skipping install")
 		}
 	}
 
