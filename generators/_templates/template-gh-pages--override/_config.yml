@@ -1,0 +1,21 @@
+# Site settings
+contact: george.lele.sun@gmail.com
+company_name: Sun Websites
+company_website: https://www.sunwebsites.org
+personal_website: http://www.mrsunny.tech
+template_readme: https://github.com/mrsunny0/template-gh-pages/blob/gh-pages/README.md
+template_generator: https://github.com/mrsunny0/generator-gls-website
+
+# Front page settings
+username: <%= name %>
+title: <%= website_meta_title %>
+header: <%= website_header_title %>
+description: <%= website_description %>
+gh_page: this.example.com
+background_image: aaa
+
+# Google-analytics
+google-analytics:
+  id: "UA-155355374-2"
+
+exclude: ['package.json', 'src' , 'node_modules']

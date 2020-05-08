@@ -1,30 +1,31 @@
 {
-  "name": "generator-gls-website",
-  "author": "George L Sun",
-  "version": "0.0.1",
-  "description": "Website generator",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha -u bdd -R spec -t 500 --recursive",
-    "watch": "mocha -u bdd -R spec -t 500 --recursive --watch"
-  },
-  "files": [
-    "generators"
-  ],
-  "keywords": [
-    "yeoman-generator"
-  ],
-  "license": "ISC",
-  "dependencies": {
-    "js-yaml": "^3.13.1",
-    "path": "^0.12.7",
-    "yeoman-generator": "^4.7.2"
-  },
-  "devDependencies": {
-    "mocha": "^7.1.1",
-    "chai": "^4.2.0",
-    "fs-extra": "^9.0.0",
-    "yeoman-test": "^2.3.0",
-    "yeoman-assert": "^3.1.1"
-  }
+	"name": "generator-gls-website",
+	"author": "George L Sun",
+	"version": "0.1.0",
+	"description": "generator for github pages (primarily)",
+	"files": [
+		"generators"
+	],
+	"keywords": [
+		"yeoman-generator"
+	],
+	"scripts": {
+		"test": "mocha -u bdd -R spec -t 500",
+		"test-all": "mocha -u bdd -R spec -t 500 --recursive",
+		"watch": "mocha -u bdd -R spec -t 500 --recursive --watch"
+	},
+	"dependencies": {
+		"yeoman-generator": "*",
+		"path": "*",
+		"fs-extra": "*",
+		"common-tags": "*"
+	},
+	"devDependencies": {
+		"gulp": "*",
+		"mocha": "*",
+		"chai": "*",
+		"yeoman-test": "*",
+		"yeoman-assert": "*"
+	},
+	"license": "MIT"
 }

@@ -1,10 +1,7 @@
 const Generator = require('yeoman-generator');
 const path = require('path');
-const yaml = require("js-yaml");
 const fs = require('fs-extra');
-const template_finder = require("../template_finder")
-
-console.log(template_finder)
+const { stripIndent } = require("common-tags")
 
 module.exports = class extends Generator {
 	/*
@@ -13,33 +10,30 @@ module.exports = class extends Generator {
 	constructor(args, opts) {
 		super(args, opts);
 
-		// flag for default (no question) option
+		// default answers
 		this.option("default", {
-			desc: "Use empty template",
+			desc: "Default option",
 			type: Boolean,
 			default: false
 		})
 
-		// flag for no install
+		// flag for install
 		this.option("install", {
-			desc: "Prevent full installation",
+			desc: "Enable full installation",
 			type: Boolean,
 			default: false
 		})
-
-		this.log("templating files...")
 	}	
 
-	/*
-	 * Paths
-	 */
-	paths() {
-		// create root template folder path
-		var sourceRoot = this.sourceRoot()
-		sourceRoot = path.join(sourceRoot, "../../../templates")
+    /*
+    * Paths
+    */
+    paths() {
+        // create root template folder path 
+		var sourceRoot = this.sourceRoot() 
+		sourceRoot = path.join(sourceRoot, "../../_templates")
 		this.sourceRoot(sourceRoot)
-		this.finder = template_finder(this.sourceRoot())
-	}
+    }
 
 	/*
 	 * Prompt user for input
@@ -49,40 +43,52 @@ module.exports = class extends Generator {
 		{
 			type: "input",
 			name: "name",
-			message: "Website name",
+			message: "Project name",
 			default: this.appname // Default to current folder name
 		},
 		{
 			type: "input",
 			name: "author",
-			message: "Website author",
-			default: ""
+			message: "Author",
+			default: "George L. Sun"
 		},
 		{
 			type: "input",
-			name: "description",
-			message: "Website description",
-			default: ""
+			name: "project_description",
+			message: "Project description",
+			default: "Description of: " + this.appname
 		},
 		{
 			type: "input",
-			name: "header",
-			message: "Website header name",
-			default: this.appname
+			name: "website_meta_title",
+			message: "Website meta head title",
+			default: "TITLE"
 		},
 		{
 			type: "input",
-			name: "main_color",
-			message: "What color theme would you like?",
-			default: "#000"
+			name: "website_header_title",
+			message: "Website header title",
+			default: "HEADER"
 		},
 		{
-			type: "checkbox",
-			name: "icons",
-			message: "Which icons do you want in your header?",
-			choices: ["email", "github", "linkedin", "twitter", "instagram", "scholar"],
-			default: []
-		}
+			type: "input",
+			name: "website_description",
+			message: "Project description",
+			default: "DESCRIPTION"
+		},
+		{
+			type: "list",
+			name: "number_of_sections",
+			message: "Number of sections",
+			choices: ["1", "2", "3", "4", "5"],
+			default: "1"
+		},
+		{
+			type: "confirm",
+			name: "build",
+			message: "Compile and build website?",
+			default: true
+		},
 		]);
 	
 		// save answers
@@ -93,78 +99,70 @@ module.exports = class extends Generator {
 	 * Compose multiple generators
 	 */
 	writing() {
-		// copy all non-template files using sub-generator
-		this.composeWith(
-			// "gls-website:copy",
-			require.resolve(path.join(__dirname, "..", "copy")),
-			{
-				sourceRoot: this.sourceRoot()
-			}
-		)
-		
-		// read in template yaml data
-		var icon_yml = yaml.safeLoad(
-			fs.readFileSync(
-				this.finder(
-					"yml",
-					"icons-template.yml"
-				), 'utf-8'
+
+		//----------------------------------
+		// Copy some boilerplate code
+		//----------------------------------
+		var copy_files = () => {
+			this.fs.copy(
+				this.templatePath("template-gh-pages/*/**"),
+				this.destinationPath("."),
+				{
+					globOptions: {
+						ignore: ["template-gh-pages/package-lock.json", "template-gh-pages/Gemfile.lock"],
+						dot: false
+					}
+				}
 			)
-		)
-				
-		// config
-		// read package.json and .git/config for metadata
-		this.fs.copyTpl(
-			this.templatePath(
-				this.finder("yml", "config-template.yml")
-			),
-			this.destinationPath("_config.yml"),
-			{
-				title: this.answers.name,
-				description: "",
-				gh_page: "",
-				header: this.answers.header
-			}
-		)
+		}
+		//----------------------------------
+		// Template some files
+		//----------------------------------
+		var config_json = {
+			name: this.answers.name,
+			author: this.answers.author,
+			project_description: this.answers.project_description,
+			website_meta_title: this.answers.website_meta_title,
+			website_header_title: this.answers.website_header_title,
+			website_description: this.answers.website_description,
+		}
 
-		// template icon yml file
-		this.fs.write(
-			this.destinationPath(path.join("_data", "icons.yml")),
-			yaml.safeDump(icon_yml)
-		)
+		var template_files = () => {
+			var config_files = ["README.md", "_config.yml"]
+			config_files.forEach((file) => {
+				this.fs.copyTpl(
+					this.templatePath("template-gh-pages--override/" + file),
+					this.destinationPath(file),
+					config_json,
+					{},
+					{
+						globOptions: {
+							dot: true
+						}
+					}
+				)
+			})
+		}
 
-		// template sections yml file
-		this.fs.copyTpl(
-			this.templatePath(
-				this.finder('yml', 'sections-template.yml')
-			),
-			this.destinationPath(path.join("_data", "sections.yml")),
-			{
-				header: this.answers.header
-			}
-		)
-
-		// template SCSS var values (e.g. color)
-		this.fs.copyTpl(
-			this.templatePath(this.finder("scss", "scss-template.scss")),
-			this.destinationPath(path.join("src", "scss", "_vars.scss")),
-			{
-				main_color: this.answers.main_color
-			}
-		)
+		// call functions (in order)
+		copy_files()
+		template_files()
 	}
 
+    /* 
+	 * Install
+	 */
 	install() {
-		if (this.options.install) {
-			this.composeWith(require.resolve(
-				path.join(
-					__dirname, 
-					"../install"
-				)	
-			))
+		if (this.answers.build === true) {
+			this.composeWith(
+				require.resolve('../install')
+			) 
 		}
 	}
 
+    /* 
+	 * End
+	 */
 	end() {
 		this.log("...tidying up")
 	}
