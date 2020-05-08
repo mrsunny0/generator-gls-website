@@ -19,7 +19,7 @@ module.exports = class extends Generator {
 
 		// flag for install
 		this.option("install", {
-			desc: "Prevent full installation",
+			desc: "Enable full installation",
 			type: Boolean,
 			default: false
 		})
@@ -54,47 +54,41 @@ module.exports = class extends Generator {
 		},
 		{
 			type: "input",
-			name: "description",
+			name: "project_description",
 			message: "Project description",
 			default: "Description of: " + this.appname
-        },
-        // random examples of inquirer
-		{
-			type: "number",
-			name: "number",
-			message: "number",
-			default: 0,
-        },
-		{
-			type: "confirm",
-			name: "icons",
-			message: "confirm",
-			default: false
-        },
-		{
-			type: "list",
-			name: "list",
-			message: "list",
-			choices: ["apple", "orange", "banana"],
-			default: "apple"
-        },
-		{
-			type: "checkbox",
-			name: "checkbox",
-			message: "checkbox",
-			choices: ["apple", "orange", "banana"],
-			default: "apple"
 		},
 		{
-			when: function(response) {
-				return response.checkbox == "apple"	
-			},
 			type: "input",
-			name: "afterQuestion",
-			message: "this came after a prior question",
-			default: "NA"
-        },
-        // rawlist, expand, password, editor (more here: https://github.com/SBoudrias/Inquirer.js/)
+			name: "website_meta_title",
+			message: "Website meta head title",
+			default: "TITLE"
+		},
+		{
+			type: "input",
+			name: "website_header_title",
+			message: "Website header title",
+			default: "HEADER"
+		},
+		{
+			type: "input",
+			name: "website_description",
+			message: "Project description",
+			default: "DESCRIPTION"
+		},
+		{
+			type: "list",
+			name: "number_of_sections",
+			message: "Number of sections",
+			choices: ["1", "2", "3", "4", "5"],
+			default: "1"
+		},
+		{
+			type: "confirm",
+			name: "build",
+			message: "Compile and build website?",
+			default: true
+		},
 		]);
 	
 		// save answers
@@ -105,18 +99,18 @@ module.exports = class extends Generator {
 	 * Compose multiple generators
 	 */
 	writing() {
+
 		//----------------------------------
 		// Copy some boilerplate code
 		//----------------------------------
 		var copy_files = () => {
 			this.fs.copy(
-				this.templatePath(),
-				this.destinationPath(),
-				{},
-				{},
+				this.templatePath("template-gh-pages/*/**"),
+				this.destinationPath("."),
 				{
 					globOptions: {
-						dot: true
+						ignore: ["template-gh-pages/package-lock.json", "template-gh-pages/Gemfile.lock"],
+						dot: false
 					}
 				}
 			)
@@ -124,56 +118,42 @@ module.exports = class extends Generator {
 		//----------------------------------
 		// Template some files
 		//----------------------------------
-		var template_files = () => {
-			this.fs.copyTpl(
-				this.templatePath(),
-				this.destinationPath(),
-				{
-					key: value
-				},
-				{},
-				{
-					globOptions: {
-						ignore: ["a", "b"],
-						dot: true
-					}
-				}
-			)
-		}
-		//----------------------------------
-		// Write some custom code
-		//----------------------------------
-		var write_files = () => {
-			this.fs.write(
-				path.join(__dirname, "file_name"),
-				"contents"
-			)
+		var config_json = {
+			name: this.answers.name,
+			author: this.answers.author,
+			project_description: this.answers.project_description,
+			website_meta_title: this.answers.website_meta_title,
+			website_header_title: this.answers.website_header_title,
+			website_description: this.answers.website_description,
 		}
 
-		//----------------------------------
-		// Use sub-generator to compose with
-		//----------------------------------
-		var use_subgenerator = () => {
-			this.composeWith(
-				require.resolve(path.join(__dirname, "..", "sub")),
-				{
-					option_value: "option_value"
-				}
-			)
+		var template_files = () => {
+			var config_files = ["README.md", "_config.yml"]
+			config_files.forEach((file) => {
+				this.fs.copyTpl(
+					this.templatePath("template-gh-pages--override/" + file),
+					this.destinationPath(file),
+					config_json,
+					{},
+					{
+						globOptions: {
+							dot: true
+						}
+					}
+				)
+			})
 		}
 
 		// call functions (in order)
 		copy_files()
 		template_files()
-		write_files()
-		use_subgenerator()
 	}
 
     /* 
 	 * Install
 	 */
 	install() {
-		if (this.options.install === true) {
+		if (this.answers.build === true) {
 			this.composeWith(
 				require.resolve('../install')
 			) 

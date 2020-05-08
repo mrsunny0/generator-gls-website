@@ -1,0 +1,15 @@
+- label: Email
+  icon: far fa-envelope 
+  href: mailto:{{ site.contact }}
+
+- label: Github
+  icon: fab fa-github
+  href: https://www.github.com/mrsunny0
+
+- label: LinkedIn
+  icon: fab fa-linkedin 
+  href: https://www.linkedin.com/george-lele-sun
+
+- label: My Scholar
+  icon: fas fa-graduation-cap
+  href: http://www.mrsunny.tech

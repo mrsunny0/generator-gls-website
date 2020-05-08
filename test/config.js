@@ -30,11 +30,12 @@ function answerPrompts(answers, options, args, d) {
         .withPrompts({
             name: answers.name ? answers.name : "test-name",
             author: answers.author ? answers.author : "test-author",
-            description: answers.description ? answers.description : 'test-description',
-            packages: answers.packages ? answers.packages : "",
-            devpackages: answers.devpackages ? answers.devpackages: true,
-            type: answers.type ? answers.type : "standard",
-            repo: answers.repo ? answers.repo : ""
+            project_description: answers.project_description ? answers.project_description : 'test-description',
+            website_meta_title: answers.website_meta_title ? answers.website_meta_title : "test-meta-title",
+            website_header_title: answers.website_header_title ? answers.website_header_title : "test-header-title",
+            website_description: answers.website_description ? answers.website_description : "test-header-description",
+            number_of_sections: answers.number_of_sections ? answers.number_of_sections : "2",
+            build: answers.build ? answers.build : "",
         })
 }
 

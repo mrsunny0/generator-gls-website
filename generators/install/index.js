@@ -13,12 +13,21 @@ module.exports = class extends Generator {
 	 */
 	install() {
 		// npm install if install flag is present
-		if (this.options.install) {
-			this.spawnCommandSync(
-				"npm",
-				["install"]
-			)
-		}
+		this.spawnCommandSync(
+			"npm",
+			["install"]
+		)
+
+		// buld using gulp with jekyll
+		this.spawnCommandSync(
+			"gulp",
+			["build"]
+		)
+
+		// browsersync and host 
+		this.spawnCommandSync(
+			"gulp"
+		)
 	}
 
 	/* 
