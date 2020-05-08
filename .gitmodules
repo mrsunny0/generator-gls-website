@@ -1,0 +1,3 @@
+[submodule "generators/_templates/template-gh-pages"]
+	path = generators/_templates/template-gh-pages
+	url = https://github.com/mrsunny0/template-gh-pages.git
