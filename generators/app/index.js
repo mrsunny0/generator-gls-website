@@ -1,10 +1,7 @@
 const Generator = require('yeoman-generator');
 const path = require('path');
-const yaml = require("js-yaml");
 const fs = require('fs-extra');
-const template_finder = require("../template_finder")
-
-console.log(template_finder)
+const { stripIndent } = require("common-tags")
 
 module.exports = class extends Generator {
 	/*
@@ -13,33 +10,30 @@ module.exports = class extends Generator {
 	constructor(args, opts) {
 		super(args, opts);
 
-		// flag for default (no question) option
+		// default answers
 		this.option("default", {
-			desc: "Use empty template",
+			desc: "Default option",
 			type: Boolean,
 			default: false
 		})
 
-		// flag for no install
+		// flag for install
 		this.option("install", {
 			desc: "Prevent full installation",
 			type: Boolean,
 			default: false
 		})
-
-		this.log("templating files...")
 	}	
 
-	/*
-	 * Paths
-	 */
-	paths() {
-		// create root template folder path
-		var sourceRoot = this.sourceRoot()
-		sourceRoot = path.join(sourceRoot, "../../../templates")
+    /*
+    * Paths
+    */
+    paths() {
+        // create root template folder path 
+		var sourceRoot = this.sourceRoot() 
+		sourceRoot = path.join(sourceRoot, "../../_templates")
 		this.sourceRoot(sourceRoot)
-		this.finder = template_finder(this.sourceRoot())
-	}
+    }
 
 	/*
 	 * Prompt user for input
@@ -49,40 +43,58 @@ module.exports = class extends Generator {
 		{
 			type: "input",
 			name: "name",
-			message: "Website name",
+			message: "Project name",
 			default: this.appname // Default to current folder name
 		},
 		{
 			type: "input",
 			name: "author",
-			message: "Website author",
-			default: ""
+			message: "Author",
+			default: "George L. Sun"
 		},
 		{
 			type: "input",
 			name: "description",
-			message: "Website description",
-			default: ""
-		},
+			message: "Project description",
+			default: "Description of: " + this.appname
+        },
+        // random examples of inquirer
 		{
-			type: "input",
-			name: "header",
-			message: "Website header name",
-			default: this.appname
-		},
+			type: "number",
+			name: "number",
+			message: "number",
+			default: 0,
+        },
 		{
-			type: "input",
-			name: "main_color",
-			message: "What color theme would you like?",
-			default: "#000"
-		},
+			type: "confirm",
+			name: "icons",
+			message: "confirm",
+			default: false
+        },
+		{
+			type: "list",
+			name: "list",
+			message: "list",
+			choices: ["apple", "orange", "banana"],
+			default: "apple"
+        },
 		{
 			type: "checkbox",
-			name: "icons",
-			message: "Which icons do you want in your header?",
-			choices: ["email", "github", "linkedin", "twitter", "instagram", "scholar"],
-			default: []
-		}
+			name: "checkbox",
+			message: "checkbox",
+			choices: ["apple", "orange", "banana"],
+			default: "apple"
+		},
+		{
+			when: function(response) {
+				return response.checkbox == "apple"	
+			},
+			type: "input",
+			name: "afterQuestion",
+			message: "this came after a prior question",
+			default: "NA"
+        },
+        // rawlist, expand, password, editor (more here: https://github.com/SBoudrias/Inquirer.js/)
 		]);
 	
 		// save answers
@@ -93,78 +105,84 @@ module.exports = class extends Generator {
 	 * Compose multiple generators
 	 */
 	writing() {
-		// copy all non-template files using sub-generator
-		this.composeWith(
-			// "gls-website:copy",
-			require.resolve(path.join(__dirname, "..", "copy")),
-			{
-				sourceRoot: this.sourceRoot()
-			}
-		)
-		
-		// read in template yaml data
-		var icon_yml = yaml.safeLoad(
-			fs.readFileSync(
-				this.finder(
-					"yml",
-					"icons-template.yml"
-				), 'utf-8'
+		//----------------------------------
+		// Copy some boilerplate code
+		//----------------------------------
+		var copy_files = () => {
+			this.fs.copy(
+				this.templatePath(),
+				this.destinationPath(),
+				{},
+				{},
+				{
+					globOptions: {
+						dot: true
+					}
+				}
 			)
-		)
-				
-		// config
-		// read package.json and .git/config for metadata
-		this.fs.copyTpl(
-			this.templatePath(
-				this.finder("yml", "config-template.yml")
-			),
-			this.destinationPath("_config.yml"),
-			{
-				title: this.answers.name,
-				description: "",
-				gh_page: "",
-				header: this.answers.header
-			}
-		)
+		}
+		//----------------------------------
+		// Template some files
+		//----------------------------------
+		var template_files = () => {
+			this.fs.copyTpl(
+				this.templatePath(),
+				this.destinationPath(),
+				{
+					key: value
+				},
+				{},
+				{
+					globOptions: {
+						ignore: ["a", "b"],
+						dot: true
+					}
+				}
+			)
+		}
+		//----------------------------------
+		// Write some custom code
+		//----------------------------------
+		var write_files = () => {
+			this.fs.write(
+				path.join(__dirname, "file_name"),
+				"contents"
+			)
+		}
 
-		// template icon yml file
-		this.fs.write(
-			this.destinationPath(path.join("_data", "icons.yml")),
-			yaml.safeDump(icon_yml)
-		)
+		//----------------------------------
+		// Use sub-generator to compose with
+		//----------------------------------
+		var use_subgenerator = () => {
+			this.composeWith(
+				require.resolve(path.join(__dirname, "..", "sub")),
+				{
+					option_value: "option_value"
+				}
+			)
+		}
 
-		// template sections yml file
-		this.fs.copyTpl(
-			this.templatePath(
-				this.finder('yml', 'sections-template.yml')
-			),
-			this.destinationPath(path.join("_data", "sections.yml")),
-			{
-				header: this.answers.header
-			}
-		)
-
-		// template SCSS var values (e.g. color)
-		this.fs.copyTpl(
-			this.templatePath(this.finder("scss", "scss-template.scss")),
-			this.destinationPath(path.join("src", "scss", "_vars.scss")),
-			{
-				main_color: this.answers.main_color
-			}
-		)
+		// call functions (in order)
+		copy_files()
+		template_files()
+		write_files()
+		use_subgenerator()
 	}
 
+    /* 
+	 * Install
+	 */
 	install() {
-		if (this.options.install) {
-			this.composeWith(require.resolve(
-				path.join(
-					__dirname, 
-					"../install"
-				)	
-			))
+		if (this.options.install === true) {
+			this.composeWith(
+				require.resolve('../install')
+			) 
 		}
 	}
 
+    /* 
+	 * End
+	 */
 	end() {
 		this.log("...tidying up")
 	}

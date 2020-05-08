@@ -5,23 +5,24 @@ module.exports = class extends Generator {
 	 * Constructor
 	 */
 	constructor(args, opts) {
-        super(args, opts);
-        this.log("installing...")
+		super(args, opts);
 	}	
 
-    /*
+	/* 
 	 * Install
 	 */
 	install() {
-        this.spawnCommandSync('npm', ['install']) // install npm packages
-        this.spawnCommandSync("bundle", ['install']); // install ruby gems
-        this.spawnCommandSync("bundle", ["exec", "jekyll", "build"]) // build jekyll site
-        this.spawnCommandSync("gulp", ['build'])
-        this.spawnCommandSync("gulp") // serve jekyll site with browersync
+		// npm install if install flag is present
+		if (this.options.install) {
+			this.spawnCommandSync(
+				"npm",
+				["install"]
+			)
+		}
 	}
 
-	end() {
-		this.log("...tidying up!")
-	}
-
+	/* 
+	 * End
+	 */
+	end() {}
 };
