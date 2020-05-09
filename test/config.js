@@ -28,7 +28,7 @@ function answerPrompts(answers, options, args, d) {
         .withOptions(options)
         .withArguments(args)
         .withPrompts({
-            name: answers.name ? answers.name : "test-name",
+            project_name: answers.project_name ? answers.project_name : "TEST NAME",
             author: answers.author ? answers.author : "test-author",
             project_description: answers.project_description ? answers.project_description : 'test-description',
             website_meta_title: answers.website_meta_title ? answers.website_meta_title : "test-meta-title",

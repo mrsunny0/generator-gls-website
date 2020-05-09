@@ -18,10 +18,10 @@ module.exports = class extends Generator {
 		})
 
 		// flag for install
-		this.option("install", {
+		this.option("noinstall", {
 			desc: "Enable full installation",
 			type: Boolean,
-			default: false
+			default: true
 		})
 	}	
 
@@ -42,7 +42,7 @@ module.exports = class extends Generator {
 		const answers = await this.prompt([
 		{
 			type: "input",
-			name: "name",
+			name: "project_name",
 			message: "Project name",
 			default: this.appname // Default to current folder name
 		},
@@ -56,7 +56,7 @@ module.exports = class extends Generator {
 			type: "input",
 			name: "project_description",
 			message: "Project description",
-			default: "Description of: " + this.answers.name
+			default: "Generic project description for " + this.appname
 		},
 		{
 			type: "input",
@@ -99,7 +99,6 @@ module.exports = class extends Generator {
 	 * Compose multiple generators
 	 */
 	writing() {
-
 		//----------------------------------
 		// Copy some boilerplate code
 		//----------------------------------
@@ -119,7 +118,8 @@ module.exports = class extends Generator {
 		// Template some files
 		//----------------------------------
 		var config_json = {
-			name: this.answers.name,
+			project_name: this.answers.project_name,
+			packagejson_name: this.answers.project_name.replace(/\s+/g, '-').toLowerCase(),
 			author: this.answers.author,
 			project_description: this.answers.project_description,
 			website_meta_title: this.answers.website_meta_title,
@@ -153,10 +153,12 @@ module.exports = class extends Generator {
 	 * Install
 	 */
 	install() {
-		if (this.answers.build === true) {
-			this.composeWith(
-				require.resolve('../install')
-			) 
+		if (!this.options.noinstall) {
+			if (this.answers.build === true) {
+				this.composeWith(
+					require.resolve('../install')
+				) 
+			}
 		}
 	}
 

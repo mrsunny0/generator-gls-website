@@ -15,7 +15,10 @@ describe("Test package installations", () => {
                 // devpackages: true,
                 // type: "standard"
             }
-            answerPrompts(answers, {}, [], "second-test")
+            var options = {
+                noinstall : true
+            }
+            answerPrompts(answers, options, [], "second-test")
         })
     })
 })
