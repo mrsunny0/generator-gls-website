@@ -7,7 +7,7 @@ template_readme: https://github.com/mrsunny0/template-gh-pages/blob/gh-pages/REA
 template_generator: https://github.com/mrsunny0/generator-gls-website
 
 # Front page settings
-username: <%= name %>
+author: <%= author %>
 title: <%= website_meta_title %>
 header: <%= website_header_title %>
 description: <%= website_description %>
