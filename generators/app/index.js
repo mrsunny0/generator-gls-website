@@ -56,7 +56,7 @@ module.exports = class extends Generator {
 			type: "input",
 			name: "project_description",
 			message: "Project description",
-			default: "Description of: " + this.appname
+			default: "Description of: " + this.answers.name
 		},
 		{
 			type: "input",
@@ -128,7 +128,7 @@ module.exports = class extends Generator {
 		}
 
 		var template_files = () => {
-			var config_files = ["README.md", "_config.yml"]
+			var config_files = ["README.md", "_config.yml", "package.json"]
 			config_files.forEach((file) => {
 				this.fs.copyTpl(
 					this.templatePath("template-gh-pages--override/" + file),
