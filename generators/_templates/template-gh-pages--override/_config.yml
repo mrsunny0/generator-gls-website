@@ -12,10 +12,13 @@ title: <%= website_meta_title %>
 header: <%= website_header_title %>
 description: <%= website_description %>
 gh_page: this.example.com
-background_image: aaa
+background: 
+  video: assets/vid/""
+  image: assets/img/1000.png 
+  color: #1a222c 
 
 # Google-analytics
 google-analytics:
-  id: "UA-155355374-2"
+  id: "UA-XXXXXXXXX-X"
 
 exclude: ['package.json', 'src' , 'node_modules']

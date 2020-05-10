@@ -30,7 +30,6 @@ function answerPrompts(answers, options, args, d) {
         .withPrompts({
             project_name: answers.project_name ? answers.project_name : "TEST NAME",
             author: answers.author ? answers.author : "test-author",
-            project_description: answers.project_description ? answers.project_description : 'test-description',
             website_meta_title: answers.website_meta_title ? answers.website_meta_title : "test-meta-title",
             website_header_title: answers.website_header_title ? answers.website_header_title : "test-header-title",
             website_description: answers.website_description ? answers.website_description : "test-header-description",

@@ -54,12 +54,6 @@ module.exports = class extends Generator {
 		},
 		{
 			type: "input",
-			name: "project_description",
-			message: "Project description",
-			default: "Generic project description for " + this.appname
-		},
-		{
-			type: "input",
 			name: "website_meta_title",
 			message: "Website meta head title",
 			default: "TITLE"
@@ -121,7 +115,6 @@ module.exports = class extends Generator {
 			project_name: this.answers.project_name,
 			packagejson_name: this.answers.project_name.replace(/\s+/g, '-').toLowerCase(),
 			author: this.answers.author,
-			project_description: this.answers.project_description,
 			website_meta_title: this.answers.website_meta_title,
 			website_header_title: this.answers.website_header_title,
 			website_description: this.answers.website_description,
