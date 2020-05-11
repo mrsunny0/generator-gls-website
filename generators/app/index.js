@@ -103,7 +103,7 @@ module.exports = class extends Generator {
 				{
 					globOptions: {
 						ignore: ["template-gh-pages/package-lock.json", "template-gh-pages/Gemfile.lock"],
-						dot: false
+						dot: true
 					}
 				}
 			)
