@@ -33,8 +33,7 @@ function answerPrompts(answers, options, args, d) {
             website_meta_title: answers.website_meta_title ? answers.website_meta_title : "test-meta-title",
             website_header_title: answers.website_header_title ? answers.website_header_title : "test-header-title",
             website_description: answers.website_description ? answers.website_description : "test-header-description",
-            number_of_sections: answers.number_of_sections ? answers.number_of_sections : "2",
-            build: answers.build ? answers.build : "",
+            build: answers.build ? answers.build : false,
         })
 }
 

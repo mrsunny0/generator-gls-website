@@ -6,17 +6,14 @@ const config = require("./config.js")
 const answerPrompts = config.answerPrompts
 const deleteDir = config.deleteDir
 
-describe("Test package installations", () => {
+describe("Test Generator", () => {
     // basic testing of standard templating
-    context("standard templating", () => {
-        it('copy and past', () => {
+    context("Basic templating", () => {
+        it('default inputs', () => {
             var answers = {
-                // packages: "a b c d e",
-                // devpackages: true,
-                // type: "standard"
             }
             var options = {
-                noinstall : true
+                noinstall : false
             }
             answerPrompts(answers, options, [], "second-test")
         })

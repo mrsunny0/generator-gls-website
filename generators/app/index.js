@@ -71,13 +71,6 @@ module.exports = class extends Generator {
 			default: "DESCRIPTION"
 		},
 		{
-			type: "list",
-			name: "number_of_sections",
-			message: "Number of sections",
-			choices: ["1", "2", "3", "4", "5"],
-			default: "1"
-		},
-		{
 			type: "confirm",
 			name: "build",
 			message: "Compile and build website?",
@@ -97,12 +90,12 @@ module.exports = class extends Generator {
 		// Copy some boilerplate code
 		//----------------------------------
 		var copy_files = () => {
-			this.fs.copy(
-				this.templatePath("template-gh-pages/*/**"),
+			this.fs.copyTpl(
+				this.templatePath("template-gh-pages/**/*"),
 				this.destinationPath("."),
 				{
 					globOptions: {
-						ignore: ["template-gh-pages/package-lock.json", "template-gh-pages/Gemfile.lock"],
+						ignore: ["package-lock.json", "Gemfile.lock"],
 						dot: true
 					}
 				}
@@ -135,6 +128,21 @@ module.exports = class extends Generator {
 					}
 				)
 			})
+
+			var data_files = ["icons.yml", "sections.yml"]
+			data_files.forEach((file) => {
+				this.fs.copyTpl(
+					this.templatePath("template-gh-pages--override/" + file),
+					this.destinationPath("./_data/" + file),
+					{},
+					{},
+					{
+						globOptions: {
+							dot: true
+						}
+					}
+				)
+			})
 		}
 
 		// call functions (in order)
@@ -146,7 +154,7 @@ module.exports = class extends Generator {
 	 * Install
 	 */
 	install() {
-		if (!this.options.noinstall) {
+		if (!this.options.noinstall || this.answers.build) {
 			if (this.answers.build === true) {
 				this.composeWith(
 					require.resolve('../install')

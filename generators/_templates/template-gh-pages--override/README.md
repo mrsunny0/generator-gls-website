@@ -1,6 +1,6 @@
 # <%= project_name %>
 
-<%= project_description %>
+Website of <%= project_name %> for github pages
 
 ## Website Purpose
 
