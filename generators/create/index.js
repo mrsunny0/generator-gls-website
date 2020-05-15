@@ -31,14 +31,12 @@ module.exports = class extends Generator {
 		// Copy some boilerplate code
 		//----------------------------------
 		var copy_files = () => {
-			this.fs.copyTpl(
+			this.fs.copy(
 				this.templatePath("template-gh-pages/**/*"),
 				this.destinationPath("."),
-				{},
-				{},
 				{
 					globOptions: {
-						ignore: ["package-lock.json", "Gemfile.lock"],
+						ignore: ["*lock*"],
 						dot: true
 					}
 				}

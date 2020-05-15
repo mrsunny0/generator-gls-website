@@ -25,76 +25,68 @@ module.exports = class extends Generator {
 		sourceRoot = path.join(sourceRoot, "../../_templates")
 		this.sourceRoot(sourceRoot)
 	}
-    
+	
+	/*
+    * Writing
+    */
     writing() {
 		//----------------------------------
-		// Copy some boilerplate code
+		// Replace all files
 		//----------------------------------
-		var copy_files = () => {
-			this.fs.copyTpl(
+		var replace_all = () => {
+			this.fs.copy(
 				this.templatePath("template-gh-pages/**/*"),
-				this.destinationPath("."),
-				{},
+				this.destinationPath("."), 
 				{},
 				{
-					globOptions: {
-						ignore: ["package-lock.json", "Gemfile.lock"],
-						dot: true
-					}
+					globOptions: {ignore: "README.md"}
 				}
 			)
 		}
-		//----------------------------------
-		// Template some files
-		//----------------------------------
-		var template_files = () => {
-			
-			// set up template
-			var config_json = {
-				project_name: this.answers.project_name,
-				packagejson_name: this.answers.project_name.replace(/\s+/g, '-').toLowerCase(),
-				author: this.answers.author,
-				website_meta_title: this.answers.website_meta_title,
-				website_header_title: this.answers.website_header_title,
-				website_description: this.answers.website_description,
-			}
 
-			// create files
-			var config_files = ["README.md", "_config.yml", "package.json"]
-			config_files.forEach((file) => {
-				this.fs.copyTpl(
-					this.templatePath("template-gh-pages--override/" + file),
-					this.destinationPath(file),
-					config_json,
-					{},
-					{
-						globOptions: {
-							dot: true
-						}
-					}
-				)
-			})
-
-			// create data files
-			var data_files = ["icons.yml", "sections.yml"]
-			data_files.forEach((file) => {
-				this.fs.copyTpl(
-					this.templatePath("template-gh-pages--override/" + file),
-					this.destinationPath("./_data/" + file),
-					{},
-					{},
-					{
-						globOptions: {
-							dot: true
-						}
-					}
+		//----------------------------------
+		// Replace what is specified
+		//----------------------------------
+		var replace_files = () => {
+			const update_files = this.answers.update_files
+			update_files.forEach((file) => {
+				this.fs.copy(
+					this.templatePath("template-gh-pages/" + file),
+					this.destinationPath("./" + file.replace("**/*", "")), // replace glob pattern
 				)
 			})
 		}
 
-		// call functions (in order)
-		// copy_files()
-		// template_files()
+		//----------------------------------
+		// Copy data file
+		//----------------------------------
+		var copy_data = () => {
+			const data_files = [
+				"_config.yml",
+				"_data/icons.yml",
+				"_data/sections.yml"
+			] 
+			data_files.forEach((file) => {
+				this.fs.copy(
+					this.templatePath("template-gh-pages/" + file),
+					this.destinationPath("./" + file.replace(/(\.\w+)$/i, '_ref$1'))
+				)
+			})
+		}
+
+		// replace all
+		if (this.answers.update == "all") {
+			replace_all()
+		} 
+		// replace only need selections
+		else {
+			replace_files()
+
+			// make a copy of reference data if asked for
+			if (this.answers.update_data) {
+				copy_data()
+			}
+		}
 	}
 	
     /* 

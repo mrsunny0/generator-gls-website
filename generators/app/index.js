@@ -112,8 +112,17 @@ module.exports = class extends Generator {
 					type: "checkbox",
 					name: "update_files",
 					message: "What specific folders would you like to update?",
-					choices: ["index.html", "gulpfile.js", "_layouts", "_includes", "src/scss", "src/js"],
+					choices: ["index.html", "gulpfile.js", "_layouts", "_includes", "src/**/*scss", "src/**/*js"],
 					default: []
+				},
+				{
+					when: function(response) {
+						return response.update_folders != "all"	
+					},
+					type: "confirm",
+					name: "update_data",
+					message: "Data yml files have been updated, would you like to download a copy?",
+					default: false
 				},
 			])
 

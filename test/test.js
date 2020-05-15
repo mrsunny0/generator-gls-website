@@ -31,7 +31,7 @@ describe.skip("Test Generator", () => {
     })
 })
 
-describe("Create Generator", () => {
+describe.skip("Create Generator", () => {
     // basic testing of standard templating
     context("Create all", () => {
         it('Create with no install', () => {
@@ -55,6 +55,49 @@ describe("Create Generator", () => {
                 noinstall : false
             }
             answerPrompts(answers, options, [], "create-test")
+        })
+    })
+})
+
+describe("Update Generator", () => {
+    // basic testing of standard templating
+    context("Update", () => {
+        it('Update all', () => {
+            var answers = {
+                whattodo: "update",
+                update: "all",
+                build: false
+            }
+            var options = {
+                noinstall : true
+            }
+            answerPrompts(answers, options, [], "update-test")
+        })
+
+        xit('Update with no install and data ref', () => {
+            var answers = {
+                whattodo: "update",
+                update_files: ["index.html", "gulpfile.js", "_layouts", "_includes", "src/**/*scss", "src/**/*js"],
+                update_data: true,
+                build: false
+            }
+            var options = {
+                noinstall : true
+            }
+            answerPrompts(answers, options, [], "update-test")
+        })
+
+        xit('Update with no install and data ref', () => {
+            var answers = {
+                whattodo: "update",
+                update_files: ["index.html", "gulpfile.js", "_layouts", "_includes", "src/**/*scss", "src/**/*js"],
+                update_data: true,
+                build: false
+            }
+            var options = {
+                noinstall : true
+            }
+            answerPrompts(answers, options, [], "update-test")
         })
     })
 })
