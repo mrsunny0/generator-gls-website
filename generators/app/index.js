@@ -39,115 +39,118 @@ module.exports = class extends Generator {
 	 * Prompt user for input
 	 */
 	async prompting() {
-		const answers = await this.prompt([
-		{
-			type: "input",
-			name: "project_name",
-			message: "Project name",
-			default: this.appname // Default to current folder name
-		},
-		{
-			type: "input",
-			name: "author",
-			message: "Author",
-			default: "George L. Sun"
-		},
-		{
-			type: "input",
-			name: "website_meta_title",
-			message: "Website meta head title",
-			default: "TITLE"
-		},
-		{
-			type: "input",
-			name: "website_header_title",
-			message: "Website header title",
-			default: "HEADER"
-		},
-		{
-			type: "input",
-			name: "website_description",
-			message: "Project description",
-			default: "DESCRIPTION"
-		},
-		{
-			type: "confirm",
-			name: "build",
-			message: "Compile and build website?",
-			default: true
-		},
-		]);
-	
+
+		// determine if user wants to update or 
+		// create new website
+		const intro = await this.prompt([
+			{
+				type: "list",
+				name: "whattodo",
+				message: "What would you like to do",
+				choices: ["create", "update"],
+				default: "create" 
+			},
+		])
+
 		// save answers
-		this.answers = answers;
+		this.intro_answer = intro
+
+		// on create
+		if (intro.whattodo == "create") {
+			const create_answers = await this.prompt([
+				{
+					type: "input",
+					name: "project_name",
+					message: "Project name",
+					default: this.appname // Default to current folder name
+				},
+				{
+					type: "input",
+					name: "author",
+					message: "Author",
+					default: "George L. Sun"
+				},
+				{
+					type: "input",
+					name: "website_meta_title",
+					message: "Website meta head title",
+					default: "TITLE"
+				},
+				{
+					type: "input",
+					name: "website_header_title",
+					message: "Website header title",
+					default: "HEADER"
+				},
+				{
+					type: "input",
+					name: "website_description",
+					message: "Project description",
+					default: "DESCRIPTION"
+				},
+				{
+					type: "confirm",
+					name: "build",
+					message: "Compile and build website?",
+					default: true
+				},
+			]);
+
+			// save answers
+			this.answers = create_answers
+		} 
+
+		// on update
+		else if (intro.whattodo == "update") {
+			const update_answers = await this.prompt([
+				{
+					type: "list",
+					name: "update",
+					message: "What would you like to update?",
+					choices: ["all", "be more specific"],
+					default: ["all"]
+				},
+				{
+					when: function(response) {
+						return response.update_folders != "all"	
+					},
+					type: "checkbox",
+					name: "update_files",
+					message: "What specific folders would you like to update?",
+					choices: ["index.html", "gulpfile.js", "_layouts", "_includes", "src/scss", "src/js"],
+					default: []
+				},
+			])
+
+			// save answers
+			this.answers = update_answers
+		}
 	}
 
 	/* 
 	 * Compose multiple generators
 	 */
 	writing() {
-		//----------------------------------
-		// Copy some boilerplate code
-		//----------------------------------
-		var copy_files = () => {
-			this.fs.copyTpl(
-				this.templatePath("template-gh-pages/**/*"),
-				this.destinationPath("."),
+
+		// Create subgenerator
+		if (this.intro_answer == "create") {
+			this.composeWith(
+				require.resolve(path.join(__dirname, "..", "create")),
 				{
-					globOptions: {
-						ignore: ["package-lock.json", "Gemfile.lock"],
-						dot: true
-					}
+					answers: this.answers
 				}
 			)
 		}
-		//----------------------------------
-		// Template some files
-		//----------------------------------
-		var config_json = {
-			project_name: this.answers.project_name,
-			packagejson_name: this.answers.project_name.replace(/\s+/g, '-').toLowerCase(),
-			author: this.answers.author,
-			website_meta_title: this.answers.website_meta_title,
-			website_header_title: this.answers.website_header_title,
-			website_description: this.answers.website_description,
+
+		// Update subgenerator
+		else {
+			this.composeWith(
+				require.resolve(path.join(__dirname, "..", "update")),
+				{
+					answers: this.answers
+				}
+			)
 		}
-
-		var template_files = () => {
-			var config_files = ["README.md", "_config.yml", "package.json"]
-			config_files.forEach((file) => {
-				this.fs.copyTpl(
-					this.templatePath("template-gh-pages--override/" + file),
-					this.destinationPath(file),
-					config_json,
-					{},
-					{
-						globOptions: {
-							dot: true
-						}
-					}
-				)
-			})
-
-			var data_files = ["icons.yml", "sections.yml"]
-			data_files.forEach((file) => {
-				this.fs.copyTpl(
-					this.templatePath("template-gh-pages--override/" + file),
-					this.destinationPath("./_data/" + file),
-					{},
-					{},
-					{
-						globOptions: {
-							dot: true
-						}
-					}
-				)
-			})
-		}
-
-		// call functions (in order)
-		copy_files()
-		template_files()
 	}
 
     /* 

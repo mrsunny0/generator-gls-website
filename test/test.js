@@ -6,16 +6,52 @@ const config = require("./config.js")
 const answerPrompts = config.answerPrompts
 const deleteDir = config.deleteDir
 
-describe("Test Generator", () => {
+xdescribe("Test Generator", () => {
     // basic testing of standard templating
     context("Basic templating", () => {
-        it('default inputs', () => {
+        it('create answers', () => {
             var answers = {
+                whattodo: "create"
             }
             var options = {
-                noinstall : false
+                noinstall : true
             }
-            answerPrompts(answers, options, [], "second-test")
+            answerPrompts(answers, options, [], "create-test")
+        })
+
+        it('update answers', () => {
+            var answers = {
+                whattodo: "update"
+            }
+            var options = {
+                noinstall : true
+            }
+            answerPrompts(answers, options, [], "update-test")
+        })
+    })
+})
+
+xdescribe("Test Generator", () => {
+    // basic testing of standard templating
+    context("Basic templating", () => {
+        it('create answers', () => {
+            var answers = {
+                whattodo: "create"
+            }
+            var options = {
+                noinstall : true
+            }
+            answerPrompts(answers, options, [], "create-test")
+        })
+
+        it('update answers', () => {
+            var answers = {
+                whattodo: "update"
+            }
+            var options = {
+                noinstall : true
+            }
+            answerPrompts(answers, options, [], "update-test")
         })
     })
 })
