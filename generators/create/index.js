@@ -1,4 +1,6 @@
 const Generator = require('yeoman-generator');
+const path = require('path');
+const fs = require('fs-extra');
 
 module.exports = class extends Generator {
 	/*
@@ -10,8 +12,19 @@ module.exports = class extends Generator {
 		// get options (prompts) from parent generator
 		// and subset the answers into this
 		var options = this.options
-		this.answers = options.answers        
-    }	
+		this.answers = options.answers   
+		this.build = options.build     
+	}	
+	
+    /*
+    * Paths
+    */
+	paths() {
+		// create root template folder path 
+		var sourceRoot = this.sourceRoot() 
+		sourceRoot = path.join(sourceRoot, "../../_templates")
+		this.sourceRoot(sourceRoot)
+	}
     
     writing() {
 		//----------------------------------
@@ -35,7 +48,7 @@ module.exports = class extends Generator {
 		// Template some files
 		//----------------------------------
 		var template_files = () => {
-			
+
 			// set up template
 			var config_json = {
 				project_name: this.answers.project_name,
@@ -82,7 +95,18 @@ module.exports = class extends Generator {
 		// call functions (in order)
 		copy_files()
 		template_files()
-    }
+	}
+	
+    /* 
+	 * Install
+	 */
+	install() {
+		if (this.build) {
+			this.composeWith(
+				require.resolve('../install')
+			) 
+		}
+	}
 
 	/* 
 	 * End

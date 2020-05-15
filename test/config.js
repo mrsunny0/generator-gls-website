@@ -17,9 +17,9 @@ async function deleteDir(dir_name) {
 }
 
 // Test double to mock prompting
-function answerPrompts(answers, options, args, d) {
+async function answerPrompts(answers, options, args, d) {
     // remove contents from dir
-    deleteDir(d)
+    await deleteDir(d)
 
     // return Promise for answer prompts
     return helpers

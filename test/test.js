@@ -6,7 +6,7 @@ const config = require("./config.js")
 const answerPrompts = config.answerPrompts
 const deleteDir = config.deleteDir
 
-xdescribe("Test Generator", () => {
+describe.skip("Test Generator", () => {
     // basic testing of standard templating
     context("Basic templating", () => {
         it('create answers', () => {
@@ -31,12 +31,13 @@ xdescribe("Test Generator", () => {
     })
 })
 
-xdescribe("Test Generator", () => {
+describe("Create Generator", () => {
     // basic testing of standard templating
-    context("Basic templating", () => {
-        it('create answers', () => {
+    context("Create all", () => {
+        it('Create with no install', () => {
             var answers = {
-                whattodo: "create"
+                whattodo: "create",
+                build: false
             }
             var options = {
                 noinstall : true
@@ -44,14 +45,16 @@ xdescribe("Test Generator", () => {
             answerPrompts(answers, options, [], "create-test")
         })
 
-        it('update answers', () => {
+        // with install
+        xit('Create with install', () => {
             var answers = {
-                whattodo: "update"
+                whattodo: "create",
+                build: true
             }
             var options = {
-                noinstall : true
+                noinstall : false
             }
-            answerPrompts(answers, options, [], "update-test")
+            answerPrompts(answers, options, [], "create-test")
         })
     })
 })

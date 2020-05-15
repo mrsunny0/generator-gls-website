@@ -18,6 +18,7 @@ module.exports = class extends Generator {
 		})
 
 		// flag for install
+		// ~DEPRECATED
 		this.option("noinstall", {
 			desc: "Enable full installation",
 			type: Boolean,
@@ -88,12 +89,6 @@ module.exports = class extends Generator {
 					message: "Project description",
 					default: "DESCRIPTION"
 				},
-				{
-					type: "confirm",
-					name: "build",
-					message: "Compile and build website?",
-					default: true
-				},
 			]);
 
 			// save answers
@@ -125,6 +120,19 @@ module.exports = class extends Generator {
 			// save answers
 			this.answers = update_answers
 		}
+
+		// prompt to build website
+		const build_answer = await this.prompt([
+			{
+				type: "confirm",
+				name: "build",
+				message: "Compile and build website?",
+				default: false
+			}
+		])
+
+		// store build answer directly as a boolean
+		this.build = build_answer.build
 	}
 
 	/* 
@@ -133,11 +141,12 @@ module.exports = class extends Generator {
 	writing() {
 
 		// Create subgenerator
-		if (this.intro_answer == "create") {
+		if (this.intro_answer.whattodo == "create") {
 			this.composeWith(
 				require.resolve(path.join(__dirname, "..", "create")),
 				{
-					answers: this.answers
+					answers: this.answers,
+					build: this.build
 				}
 			)
 		}
@@ -147,7 +156,8 @@ module.exports = class extends Generator {
 			this.composeWith(
 				require.resolve(path.join(__dirname, "..", "update")),
 				{
-					answers: this.answers
+					answers: this.answers,
+					build: this.build
 				}
 			)
 		}
@@ -156,15 +166,7 @@ module.exports = class extends Generator {
     /* 
 	 * Install
 	 */
-	install() {
-		if (!this.options.noinstall || this.answers.build) {
-			if (this.answers.build === true) {
-				this.composeWith(
-					require.resolve('../install')
-				) 
-			}
-		}
-	}
+	install() {}
 
     /* 
 	 * End
