@@ -40,6 +40,7 @@ module.exports = class extends Generator {
 		 * - src/img files
 		 * - src/video files
 		 * - _includes/google-analytics.html
+		 * - .git (original git repo)
 		 */
 
 		const filesToIgnore = [
@@ -52,6 +53,7 @@ module.exports = class extends Generator {
 			"**/src/img/*",
 			"**/src/video/*",
 			"**/_includes/google*",
+			"**/.git/**/*"
 		]
 
 		//----------------------------------
