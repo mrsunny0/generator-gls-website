@@ -1,9 +1,11 @@
-const helpers = require('yeoman-test');
-const assert = require('chai')
-const { exec } = require("child_process")
-const { spawn } = require("child_process")
+const assert = require('chai').assert
 const config = require("./config.js")
 const answerPrompts = config.answerPrompts
+const fs = require('fs')
+
+const helpers = require('yeoman-test');
+const { exec } = require("child_process")
+const { spawn } = require("child_process")
 const deleteDir = config.deleteDir
 
 describe.skip("Test Generator", () => {
@@ -62,7 +64,7 @@ describe.skip("Create Generator", () => {
 describe("Update Generator", () => {
     // basic testing of standard templating
     context("Update", () => {
-        it('Update all', () => {
+        it('Update all', async () => {
             var answers = {
                 whattodo: "update",
                 update: "all",
@@ -71,7 +73,13 @@ describe("Update Generator", () => {
             var options = {
                 noinstall : true
             }
-            answerPrompts(answers, options, [], "update-test")
+            answerPrompts(answers, options, [], "update-test").then(() => {
+                // check if file exists
+                if (fs.existsSync(__dirname + "/test/test-dir/update-test/" + "package-lock.json")) {
+                    console.log("file still exists")
+                }
+            })
+
         })
 
         xit('Update with no install and data ref', () => {

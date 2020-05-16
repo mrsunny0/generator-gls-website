@@ -35,12 +35,16 @@ module.exports = class extends Generator {
 		//----------------------------------
 		var replace_all = () => {
 			this.fs.copy(
-				this.templatePath("template-gh-pages/**/*"),
+				this.templatePath("template-gh-pages/**/*"), 
 				this.destinationPath("."), 
-				{},
 				{
-					globOptions: {ignore: "README.md"}
-				}
+					globOptions: {
+						ignore: [
+							"**/*.yml",
+						],
+						dot: true
+					}
+				},
 			)
 		}
 

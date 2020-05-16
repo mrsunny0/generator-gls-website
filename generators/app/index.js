@@ -103,11 +103,11 @@ module.exports = class extends Generator {
 					name: "update",
 					message: "What would you like to update?",
 					choices: ["all", "be more specific"],
-					default: ["all"]
+					default: "all"
 				},
 				{
 					when: function(response) {
-						return response.update_folders != "all"	
+						return response.update != "all"	
 					},
 					type: "checkbox",
 					name: "update_files",
@@ -117,7 +117,7 @@ module.exports = class extends Generator {
 				},
 				{
 					when: function(response) {
-						return response.update_folders != "all"	
+						return response.update != "all"	
 					},
 					type: "confirm",
 					name: "update_data",
