@@ -36,10 +36,13 @@ module.exports = class extends Generator {
 				this.destinationPath("."),
 				{
 					globOptions: {
-						ignore: ["*lock*"],
+						ignore: [
+							"**/*-lock.json", // ignore package lock
+							"**/*.lock", // ignore gem lock
+						],
 						dot: true
 					}
-				}
+				},
 			)
 		}
 		//----------------------------------

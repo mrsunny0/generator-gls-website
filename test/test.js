@@ -73,16 +73,23 @@ describe("Update Generator", () => {
             var options = {
                 noinstall : true
             }
-            answerPrompts(answers, options, [], "update-test").then(() => {
-                // check if file exists
-                if (fs.existsSync(__dirname + "/test/test-dir/update-test/" + "package-lock.json")) {
-                    console.log("file still exists")
-                }
-            })
-
+            answerPrompts(answers, options, [], "update-test")
         })
 
-        xit('Update with no install and data ref', () => {
+        it('Update with no data ref', () => {
+            var answers = {
+                whattodo: "update",
+                update_files: ["index.html", "gulpfile.js", "_layouts", "_includes", "src/**/*scss", "src/**/*js"],
+                update_data: false,
+                build: false
+            }
+            var options = {
+                noinstall : true
+            }
+            answerPrompts(answers, options, [], "update-some")
+        })
+
+        it('Update with data ref', () => {
             var answers = {
                 whattodo: "update",
                 update_files: ["index.html", "gulpfile.js", "_layouts", "_includes", "src/**/*scss", "src/**/*js"],
@@ -92,20 +99,7 @@ describe("Update Generator", () => {
             var options = {
                 noinstall : true
             }
-            answerPrompts(answers, options, [], "update-test")
-        })
-
-        xit('Update with no install and data ref', () => {
-            var answers = {
-                whattodo: "update",
-                update_files: ["index.html", "gulpfile.js", "_layouts", "_includes", "src/**/*scss", "src/**/*js"],
-                update_data: true,
-                build: false
-            }
-            var options = {
-                noinstall : true
-            }
-            answerPrompts(answers, options, [], "update-test")
+            answerPrompts(answers, options, [], "update-data")
         })
     })
 })

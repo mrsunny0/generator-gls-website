@@ -102,7 +102,7 @@ module.exports = class extends Generator {
 					type: "list",
 					name: "update",
 					message: "What would you like to update?",
-					choices: ["all", "be more specific"],
+					choices: ["all", "specific files"],
 					default: "all"
 				},
 				{
@@ -121,7 +121,7 @@ module.exports = class extends Generator {
 					},
 					type: "confirm",
 					name: "update_data",
-					message: "Data yml files have been updated, would you like to download a copy?",
+					message: "Data yml files have been updated, would you like to download a reference copy?",
 					default: false
 				},
 			])

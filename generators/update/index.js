@@ -30,6 +30,30 @@ module.exports = class extends Generator {
     * Writing
     */
     writing() {
+		/* FILES NOT TO REPLACE
+		 * - yml files
+		 * - package.json
+		 * - package-lock.json
+		 * - Gemfile
+		 * - Gemfile.lock
+		 * - README.md
+		 * - src/img files
+		 * - src/video files
+		 * - _includes/google-analytics.html
+		 */
+
+		const filesToIgnore = [
+			"**/*.yml",
+			"**/package.json",
+			"**/package-lock.json",
+			"**/Gemfile",
+			"**/Gemfile.lock",
+			"**/README.md",
+			"**/src/img/*",
+			"**/src/video/*",
+			"**/_includes/google*",
+		]
+
 		//----------------------------------
 		// Replace all files
 		//----------------------------------
@@ -39,9 +63,7 @@ module.exports = class extends Generator {
 				this.destinationPath("."), 
 				{
 					globOptions: {
-						ignore: [
-							"**/*.yml",
-						],
+						ignore: filesToIgnore,
 						dot: true
 					}
 				},
@@ -57,6 +79,12 @@ module.exports = class extends Generator {
 				this.fs.copy(
 					this.templatePath("template-gh-pages/" + file),
 					this.destinationPath("./" + file.replace("**/*", "")), // replace glob pattern
+					{
+						globOptions: {
+							ignore: filesToIgnore,
+							dot: true
+						}
+					}
 				)
 			})
 		}
