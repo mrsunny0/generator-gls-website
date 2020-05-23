@@ -37,6 +37,7 @@ module.exports = class extends Generator {
 		 * - Gemfile
 		 * - Gemfile.lock
 		 * - README.md
+		 * - TODO.md
 		 * - src/img files
 		 * - src/video files
 		 * - _includes/google-analytics.html
@@ -50,6 +51,7 @@ module.exports = class extends Generator {
 			"**/Gemfile",
 			"**/Gemfile.lock",
 			"**/README.md",
+			"**/TODO.md",
 			"**/src/img/*",
 			"**/src/video/*",
 			"**/_includes/google*",
@@ -96,6 +98,7 @@ module.exports = class extends Generator {
 		//----------------------------------
 		var copy_data = () => {
 			const data_files = [
+				"package.json",
 				"_config.yml",
 				"_data/icons.yml",
 				"_data/sections.yml"
@@ -105,6 +108,7 @@ module.exports = class extends Generator {
 					this.templatePath("template-gh-pages/" + file),
 					this.destinationPath("./" + file.replace(/(\.\w+)$/i, '_ref$1'))
 				)
+				console.log(file)
 			})
 		}
 
@@ -115,11 +119,12 @@ module.exports = class extends Generator {
 		// replace only need selections
 		else {
 			replace_files()
+		}
 
-			// make a copy of reference data if asked for
-			if (this.answers.update_data) {
-				copy_data()
-			}
+		console.log(this.answers.update_data)
+		// make a copy of reference data if asked for
+		if (this.answers.update_data) {
+			copy_data()
 		}
 	}
 	

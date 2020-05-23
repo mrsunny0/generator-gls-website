@@ -116,13 +116,10 @@ module.exports = class extends Generator {
 					default: []
 				},
 				{
-					when: function(response) {
-						return response.update != "all"	
-					},
 					type: "confirm",
 					name: "update_data",
 					message: "Data yml files have been updated, would you like to download a reference copy?",
-					default: false
+					default: true
 				},
 			])
 

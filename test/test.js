@@ -68,15 +68,16 @@ describe("Update Generator", () => {
             var answers = {
                 whattodo: "update",
                 update: "all",
+                update_data: true,
                 build: false
             }
             var options = {
                 noinstall : true
             }
-            answerPrompts(answers, options, [], "update-test")
+            answerPrompts(answers, options, [], "update-all")
         })
 
-        it('Update with no data ref', () => {
+        xit('Update with no data ref', () => {
             var answers = {
                 whattodo: "update",
                 update_files: ["index.html", "gulpfile.js", "_layouts", "_includes", "src/**/*scss", "src/**/*js"],
@@ -89,7 +90,7 @@ describe("Update Generator", () => {
             answerPrompts(answers, options, [], "update-some")
         })
 
-        it('Update with data ref', () => {
+        xit('Update with data ref', () => {
             var answers = {
                 whattodo: "update",
                 update_files: ["index.html", "gulpfile.js", "_layouts", "_includes", "src/**/*scss", "src/**/*js"],
