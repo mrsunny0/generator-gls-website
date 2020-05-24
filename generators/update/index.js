@@ -46,6 +46,7 @@ module.exports = class extends Generator {
 
 		const filesToIgnore = [
 			"**/*.yml",
+			"**/.git",
 			"**/package.json",
 			"**/package-lock.json",
 			"**/Gemfile",
@@ -55,7 +56,8 @@ module.exports = class extends Generator {
 			"**/src/img/*",
 			"**/src/video/*",
 			"**/_includes/google*",
-			"**/.git/**/*"
+			"**/assets",
+			"**/site"
 		]
 
 		//----------------------------------

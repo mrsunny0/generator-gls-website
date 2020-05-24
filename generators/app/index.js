@@ -49,7 +49,7 @@ module.exports = class extends Generator {
 				name: "whattodo",
 				message: "What would you like to do",
 				choices: ["create", "update"],
-				default: "create" 
+				default: "update" 
 			},
 		])
 
