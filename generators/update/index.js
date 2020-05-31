@@ -53,7 +53,7 @@ module.exports = class extends Generator {
 			"**/Gemfile.lock",
 			"**/README.md",
 			"**/TODO.md",
-			"**/src/img/*",
+			"**/src/img/*", // ignores only top level example images
 			"**/src/video/*",
 			"**/_includes/google*",
 			"**/assets",
