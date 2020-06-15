@@ -77,7 +77,7 @@ module.exports = class extends Generator {
 			})
 
 			// create data files
-			var data_files = ["icons.yml", "sections.yml"]
+			var data_files = ["icons.yml", "sections.yml", "footer.yml"]
 			data_files.forEach((file) => {
 				this.fs.copyTpl(
 					this.templatePath("template-gh-pages--override/" + file),
