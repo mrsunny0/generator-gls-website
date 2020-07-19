@@ -103,7 +103,8 @@ module.exports = class extends Generator {
 				"package.json",
 				"_config.yml",
 				"_data/icons.yml",
-				"_data/sections.yml"
+				"_data/sections.yml",
+				"_data/footer.yml"
 			] 
 			data_files.forEach((file) => {
 				this.fs.copy(
